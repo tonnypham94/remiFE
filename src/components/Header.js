@@ -137,6 +137,7 @@ function Header() {
             <TextField
               id="password"
               label="Password"
+              type="password"
               value={value.password}
               error={!!errors.password}
               helperText={errors.password}

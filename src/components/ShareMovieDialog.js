@@ -7,7 +7,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogTitle from '@mui/material/DialogTitle'
 import { TextField } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
-import { shareMoviesSlice } from '../redux/movies'
+import { shareMoviesSlice, getMoviesSlice } from '../redux/movies'
 import { getMovieDetails } from '../api'
 import { youtubeParserID } from '../utils/actions'
 
@@ -55,8 +55,10 @@ function ShareMovieDialog({isOpen, handleClose, handleSubmit}) {
         result.title = res?.data?.items?.[0]?.snippet?.title
         result.description = res?.data?.items?.[0]?.snippet?.description
       })
-      dispatch(shareMoviesSlice(result))
-      handleSubmit()
+      dispatch(shareMoviesSlice(result)).then(() => {
+        dispatch(getMoviesSlice())
+        handleSubmit()
+      })
     }
     setValue('')
   }
