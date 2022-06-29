@@ -2,10 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 import { createUserReducers, createUserSlice } from './createUser'
 import { checkUserReducers, checkUserSlice } from './checkUser'
 
-const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {}
-console.log('user', user)
+const userData = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {}
 const initialState = {
-  data: user,
+  data: userData,
   error: false,
   loading: false
 }
@@ -13,6 +12,16 @@ const initialState = {
 export const userSlice = createSlice({
   name: 'user',
   initialState,
+  reducers: {
+    logoutUserSlice: (state) => {
+      localStorage.removeItem('userData')
+      state.data = {}
+    },
+    loginUserSlice: (state, action) => {
+      localStorage.setItem('userData', JSON.stringify(action?.payload))
+      state.data = action?.payload
+    },
+  },
   extraReducers: {
     ...createUserReducers,
     ...checkUserReducers
@@ -23,7 +32,10 @@ export const userSlice = createSlice({
 export default userSlice.reducer
 
 // Actions
+const { logoutUserSlice, loginUserSlice } = userSlice.actions
 export {
   createUserSlice,
-  checkUserSlice
+  checkUserSlice,
+  logoutUserSlice,
+  loginUserSlice
 }

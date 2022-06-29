@@ -25,8 +25,8 @@ function ConfirmationDialog({title, content, isOpen, handleClose, handleSubmit})
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleSubmit} autoFocus>
+          <Button onClick={handleClose} variant="contained" color='neutral'>Disagree</Button>
+          <Button onClick={handleSubmit} autoFocus variant="contained">
             Agree
           </Button>
         </DialogActions>

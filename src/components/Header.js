@@ -4,7 +4,11 @@ import { Button, Typography, TextField } from '@mui/material'
 import CottageIcon from '@mui/icons-material/Cottage'
 import ConfirmationDialog from './ConfirmationDialog'
 import { useSelector, useDispatch } from 'react-redux'
-import { createUserSlice, checkUserSlice, logoutUserSlice } from '../redux/user'
+import { createUserSlice, checkUserSlice, logoutUserSlice, loginUserSlice } from '../redux/user'
+import { getMoviesSlice } from '../redux/movies'
+import ShareMovieDialog from './ShareMovieDialog'
+import axios from 'axios'
+import { YOUTUBE_KEY_API } from '../utils/const'
 
 const initialValue = {
   email: '',
@@ -47,8 +51,8 @@ function Header() {
   const [value, setValue] = React.useState(initialValue)
   const [errors, setErrors] = React.useState(initialValue)
   const [isNewAccount, setIsNewAccount] = React.useState(false)
+  const [isShareVideo, setIsShareVideo] = React.useState(false)
   const userData = useSelector(state => state.user.data)
-  console.log('Header -> userData', userData)
 
   const handleChange = (event) => {
     setValue({
@@ -58,7 +62,13 @@ function Header() {
   }
 
   const handleLogin = () => {
-    dispatch(checkUserSlice(value)).then(setIsNewAccount(true))
+    dispatch(checkUserSlice(value)).then(res => {
+      if (res?.payload?.data?.length) {
+        dispatch(loginUserSlice(value))
+      } else {
+        setIsNewAccount(true)
+      }
+    })
   }
 
   const validateForm = () => {
@@ -88,13 +98,28 @@ function Header() {
 
   const handleSubmitConfirmation = () => {
     userData?.email
-      // ? localStorage.removeItem('userData')
-      ? window.onload = function () {
-          localStorage.removeItem('userData')
-        }
+      ? dispatch(logoutUserSlice(value))
       : dispatch(createUserSlice(value))
     setIsNewAccount(false)
+    setValue(initialValue)
   }
+
+  const handleOpenShareVideo = (value) => () => {
+    setIsShareVideo(value)
+  }
+
+  const handleSubmitShareVideo = () => {
+    setIsShareVideo(false)
+  }
+
+  React.useEffect(() => {
+    dispatch(getMoviesSlice())
+  }, [])
+
+  console.log('Header -> YOUTUBE_KEY_API', YOUTUBE_KEY_API)
+  axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=tcYodQoapMg&key=${YOUTUBE_KEY_API}`).then(res => {
+    console.log('Header -> res', res)
+  })
 
   return (
     <div className={classes.header}>
@@ -103,7 +128,7 @@ function Header() {
       {userData?.email
         ? <div className={classes.logout}>
             <div>Welcome: {userData?.email}</div>
-            <Button variant="contained" className={classes.loginButton} type='submit' color='secondary'>Share a movie</Button>
+            <Button variant="contained" className={classes.loginButton} type='submit' color='secondary' onClick={handleOpenShareVideo(true)}>Share a movie</Button>
             <Button variant="contained" className={classes.loginButton} type='submit' color='neutral' onClick={handleOpenConfirmation(true)}>Logout</Button>
           </div>
         : <form className={classes.loginForm} noValidate autoComplete="off" onSubmit={onSubmit}>
@@ -133,6 +158,11 @@ function Header() {
         isOpen={isNewAccount}
         handleClose={handleOpenConfirmation(false)}
         handleSubmit={handleSubmitConfirmation}
+      />
+      <ShareMovieDialog
+        isOpen={isShareVideo}
+        handleClose={handleOpenShareVideo(false)}
+        handleSubmit={handleSubmitShareVideo}
       />
     </div>
   )
