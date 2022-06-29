@@ -22,12 +22,18 @@ const theme = createTheme({
       "fontWeight": 600,
     },
     subtitle1: {
-      "fontSize": '1rem',
+      "fontSize": '1.2rem',
       "fontWeight": 600,
+      "color": '#ec631f'
     },
     subtitle2: {
-      "fontSize": '0.75rem',
+      "fontSize": '1rem',
       "fontWeight": 'bold',
+    },
+    subtitle3: {
+      "fontSize": '1.2rem',
+      "fontWeight": 600,
+      "color": '#ad5eed'
     },
     paragraph1: {
       "fontSize": '0.75rem',

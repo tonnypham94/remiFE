@@ -8,6 +8,8 @@ import DialogTitle from '@mui/material/DialogTitle'
 import { TextField } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
 import { shareMoviesSlice } from '../redux/movies'
+import { getMovieDetails } from '../api'
+import { youtubeParserID } from '../utils/actions'
 
 function ShareMovieDialog({isOpen, handleClose, handleSubmit}) {
   const dispatch = useDispatch()
@@ -36,19 +38,24 @@ function ShareMovieDialog({isOpen, handleClose, handleSubmit}) {
         ? ''
         : 'Url is not valid.'
     setErrors(data)
-    console.log('validateForm -> data', data)
 
     return !data
   }
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     const canSubmit = validateForm()
     if (canSubmit) {
-      dispatch(shareMoviesSlice({
+      const idUrl = youtubeParserID(value)
+      const result = {
         email: userData?.email,
-        sharedMovie: value
-      }))
+        sharedMovieId: idUrl
+      }
+      await getMovieDetails(idUrl).then(res => {
+        result.title = res?.data?.items?.[0]?.snippet?.title
+        result.description = res?.data?.items?.[0]?.snippet?.description
+      })
+      dispatch(shareMoviesSlice(result))
       handleSubmit()
     }
     setValue('')

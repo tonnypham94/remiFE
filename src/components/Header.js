@@ -7,8 +7,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { createUserSlice, checkUserSlice, logoutUserSlice, loginUserSlice } from '../redux/user'
 import { getMoviesSlice } from '../redux/movies'
 import ShareMovieDialog from './ShareMovieDialog'
-import axios from 'axios'
-import { YOUTUBE_KEY_API } from '../utils/const'
 
 const initialValue = {
   email: '',
@@ -116,18 +114,13 @@ function Header() {
     dispatch(getMoviesSlice())
   }, [])
 
-  console.log('Header -> YOUTUBE_KEY_API', YOUTUBE_KEY_API)
-  axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=tcYodQoapMg&key=${YOUTUBE_KEY_API}`).then(res => {
-    console.log('Header -> res', res)
-  })
-
   return (
     <div className={classes.header}>
       <CottageIcon sx={{ fontSize: "80px", marginRight: '20px' }} />
       <Typography variant="h2">Funny Movies</Typography>
       {userData?.email
         ? <div className={classes.logout}>
-            <div>Welcome: {userData?.email}</div>
+            <Typography variant="subtitle3">Welcome: {userData?.email}</Typography>
             <Button variant="contained" className={classes.loginButton} type='submit' color='secondary' onClick={handleOpenShareVideo(true)}>Share a movie</Button>
             <Button variant="contained" className={classes.loginButton} type='submit' color='neutral' onClick={handleOpenConfirmation(true)}>Logout</Button>
           </div>

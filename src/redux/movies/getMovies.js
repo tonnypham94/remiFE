@@ -18,6 +18,6 @@ export const getMoviesReducers = {
 
   [getMoviesSlice.fulfilled]: (state, action) => {
     state.loading = false
-    state.items = action?.payload?.data?.data
+    state.items = action?.payload?.data
   },
 }
